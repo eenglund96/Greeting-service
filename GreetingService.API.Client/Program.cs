@@ -1,10 +1,12 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
 using System.Xml;
 using System.Xml.Serialization;
+using System.Threading.Tasks;
 
 namespace GreetingService.API.Client
 {
@@ -19,6 +21,7 @@ namespace GreetingService.API.Client
         private const string _deleteGreetingCommand = "delete greeting";
         private const string _deleteGreetingsCommand = "delete all";
         private const string _exportGreetingscommand = "export greetings";
+        private const string _repeatingCallsCommand = "repeat calls ";
         private static string _from = "Emelie";
         private static string _to = "Elias";
 
@@ -45,6 +48,7 @@ namespace GreetingService.API.Client
                 Console.WriteLine($"{_deleteGreetingCommand} [id]");
                 Console.WriteLine(_deleteGreetingsCommand);
                 Console.WriteLine(_exportGreetingscommand);
+                Console.WriteLine($"{_repeatingCallsCommand} [count]");
 
                 Console.WriteLine("Write your command and press [enter] to execute!");
 
@@ -131,6 +135,20 @@ namespace GreetingService.API.Client
                     await ExportGreetingsAsync();
                 }
 
+                else if (command.StartsWith(_repeatingCallsCommand))
+                {
+                    var countPart = command.Replace(_repeatingCallsCommand, "");
+
+                    if (int.TryParse(countPart, out var count))
+                    {
+                        await RepeatCallsAsync(count);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Could not parse {countPart} as int");
+                    }
+                }
+
                 else
                 {
                     Console.WriteLine("Command not recognized!");
@@ -138,7 +156,7 @@ namespace GreetingService.API.Client
             }
         }
 
-        private static async Task GetGreetingsAsync()
+        private static async Task<IEnumerable<Greeting>> GetGreetingsAsync()
         {
             try
             {
@@ -155,12 +173,14 @@ namespace GreetingService.API.Client
                 }
 
                 Console.WriteLine();
+                return greetings;
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Get greetings failed: {e.Message}\n");
             }
 
+            return Enumerable.Empty<Greeting>();
         }
 
         private static async Task GetGreetingAsync(Guid id)
@@ -238,7 +258,7 @@ namespace GreetingService.API.Client
         private static async Task DeleteGreetings()
         {
             var response = await _httpClient.GetAsync("http://localhost:5002/api/Greeting");
-            response.EnsureSuccessStatusCode();                                               
+            response.EnsureSuccessStatusCode();
             var responseBody = await response.Content.ReadAsStringAsync();
             var greetings = JsonSerializer.Deserialize<IList<Greeting>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
@@ -282,6 +302,35 @@ namespace GreetingService.API.Client
             {
                 Console.WriteLine($"Failed to export greetings. Reason: {e}.");
             }
+        }
+
+        private static async Task RepeatCallsAsync(int count)
+        {
+            var greetings = await GetGreetingsAsync();
+            var greeting = greetings.Last();
+
+            //init a jobs list
+            var random = new Random();
+            var jobs = new List<int>();
+            for (int i = 1; i <= count; i++)
+            {
+                jobs.Add(i);
+            }
+
+            var stopwatch = Stopwatch.StartNew();           //use stopwatch to measure elapsed time just like a real world stopwatch
+
+            //I cheat by running multiple calls in parallel for maximum throughput - we will be limited by our cpu, wifi, internet speeds
+            //This is a bit advanced and the syntax is new with lamdas - don't worry if you don't understand all of it.
+            //I always copy this from the internet and adapt to my needs
+            //Running this in Visual Studio debugger is slow, try running .exe file directly from File Explorer or command line prompt
+            await Parallel.ForEachAsync(jobs, new ParallelOptions { MaxDegreeOfParallelism = 50 }, async (job, token) =>
+            {
+                var start = stopwatch.ElapsedMilliseconds;
+                var response = await _httpClient.GetAsync("https://emelie-appservice-dev.azurewebsites.net/api/Greeting/cbaddfee-5498-47c7-8723-a5ca3c83a55b");
+                var end = stopwatch.ElapsedMilliseconds;
+
+                Console.WriteLine($"Response: {response.StatusCode} - Call: {job} - latency: {end - start} ms - rate/s: {job / stopwatch.Elapsed.TotalSeconds} - Message: {greeting.Message}");
+            });
         }
     }
 }
