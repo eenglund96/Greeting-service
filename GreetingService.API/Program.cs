@@ -16,7 +16,7 @@ builder.Services.AddScoped<IGreetingRepository, FileGreetingRepository>(c =>
     return new FileGreetingRepository(config["FileRepositoryFilePath"]);
 });
 
-builder.Services.AddScoped<IUserService, HardCodedUserService>();
+builder.Services.AddScoped<IUserService, AppSettingsUserService>();
 
 var app = builder.Build();
 

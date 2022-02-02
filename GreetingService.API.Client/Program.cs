@@ -24,6 +24,9 @@ namespace GreetingService.API.Client
 
         public static async Task Main(string[] args)
         {
+            //_httpClient.BaseAddress = new Uri("http://localhost:5002/");
+            _httpClient.BaseAddress = new Uri("https://emelie-appservice-dev.azurewebsites.net/");
+
             Console.WriteLine("Welcome to command line Greeting client!");
             Console.WriteLine("Please enter the name of the greeting sender:");
             var from = Console.ReadLine();
@@ -142,7 +145,7 @@ namespace GreetingService.API.Client
         {
             try
             {
-                var response = await _httpClient.GetAsync("http://localhost:5002/api/Greeting");
+                var response = await _httpClient.GetAsync("api/Greeting");
                 response.EnsureSuccessStatusCode();                                                 //throws exception if HTTP response status is not a success status
                 var responseBody = await response.Content.ReadAsStringAsync();
 
@@ -167,7 +170,7 @@ namespace GreetingService.API.Client
         {
             try
             {
-                var response = await _httpClient.GetAsync($"http://localhost:5002/api/Greeting/{id}");
+                var response = await _httpClient.GetAsync($"api/Greeting/{id}");
                 response.EnsureSuccessStatusCode();                                                 //throws exception if HTTP response status is not a success status
                 var responseBody = await response.Content.ReadAsStringAsync();
 
@@ -192,7 +195,7 @@ namespace GreetingService.API.Client
                     Message = message,
                     Timestamp = DateTime.Now,
                 };
-                var response = await _httpClient.PostAsJsonAsync("http://localhost:5002/api/Greeting", greeting);
+                var response = await _httpClient.PostAsJsonAsync("api/Greeting", greeting);
                 Console.WriteLine($"Posted greeting. Service responded with: {response.StatusCode}");
             }
             catch (Exception e)
@@ -212,7 +215,7 @@ namespace GreetingService.API.Client
                     To = _to,
                     Message = message,
                 };
-                var response = await _httpClient.PutAsJsonAsync($"http://localhost:5002/api/Greeting/{id}", greeting);
+                var response = await _httpClient.PutAsJsonAsync($"api/Greeting/{id}", greeting);
                 Console.WriteLine($"Updated greeting. Service responded with: {response.StatusCode}");
             }
             catch (Exception e)
@@ -225,7 +228,7 @@ namespace GreetingService.API.Client
         {
             try
             {
-                var response = await _httpClient.DeleteAsync($"http://localhost:5002/api/Greeting/{id}");
+                var response = await _httpClient.DeleteAsync($"api/Greeting/{id}");
                 response.EnsureSuccessStatusCode();
                 Console.WriteLine($"Deleted id: {id}!");
             }
@@ -237,8 +240,13 @@ namespace GreetingService.API.Client
 
         private static async Task DeleteGreetings()
         {
+<<<<<<< Updated upstream
             var response = await _httpClient.GetAsync("http://localhost:5002/api/Greeting");
             response.EnsureSuccessStatusCode();                                               
+=======
+            var response = await _httpClient.GetAsync("api/Greeting");
+            response.EnsureSuccessStatusCode();
+>>>>>>> Stashed changes
             var responseBody = await response.Content.ReadAsStringAsync();
             var greetings = JsonSerializer.Deserialize<IList<Greeting>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
@@ -251,7 +259,7 @@ namespace GreetingService.API.Client
                 foreach (var greeting in greetings)
                 {
                     var id = greeting.Id;
-                    await _httpClient.DeleteAsync($"http://localhost:5002/api/Greeting/{id}");
+                    await _httpClient.DeleteAsync($"api/Greeting/{id}");
                 }
                 Console.WriteLine("You have now deleted all of your greetings!");
             }
@@ -261,7 +269,7 @@ namespace GreetingService.API.Client
         {
             try
             {
-                var response = await _httpClient.GetAsync("http://localhost:5002/api/Greeting/");
+                var response = await _httpClient.GetAsync("api/Greeting/");
                 response.EnsureSuccessStatusCode();
                 var responseBody = await response.Content.ReadAsStringAsync();
                 var greetings = JsonSerializer.Deserialize<List<Greeting>>(responseBody);
@@ -283,5 +291,37 @@ namespace GreetingService.API.Client
                 Console.WriteLine($"Failed to export greetings. Reason: {e}.");
             }
         }
+<<<<<<< Updated upstream
+=======
+
+        private static async Task RepeatCallsAsync(int count)
+        {
+            var greetings = await GetGreetingsAsync();
+            var greeting = greetings.Last();
+
+            //init a jobs list
+            var random = new Random();
+            var jobs = new List<int>();
+            for (int i = 1; i <= count; i++)
+            {
+                jobs.Add(i);
+            }
+
+            var stopwatch = Stopwatch.StartNew();           //use stopwatch to measure elapsed time just like a real world stopwatch
+
+            //I cheat by running multiple calls in parallel for maximum throughput - we will be limited by our cpu, wifi, internet speeds
+            //This is a bit advanced and the syntax is new with lamdas - don't worry if you don't understand all of it.
+            //I always copy this from the internet and adapt to my needs
+            //Running this in Visual Studio debugger is slow, try running .exe file directly from File Explorer or command line prompt
+            await Parallel.ForEachAsync(jobs, new ParallelOptions { MaxDegreeOfParallelism = 50 }, async (job, token) =>
+            {
+                var start = stopwatch.ElapsedMilliseconds;
+                var response = await _httpClient.GetAsync("api/Greeting/");
+                var end = stopwatch.ElapsedMilliseconds;
+
+                Console.WriteLine($"Response: {response.StatusCode} - Call: {job} - latency: {end - start} ms - rate/s: {job / stopwatch.Elapsed.TotalSeconds} - Message: {greeting.Message}");
+            });
+        }
+>>>>>>> Stashed changes
     }
 }

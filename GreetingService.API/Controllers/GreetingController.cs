@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace GreetingService.API.Controllers
 {
     [Route("api/[controller]")]
-    //[BasicAuth]
+    [BasicAuth]
     [ApiController]
     public class GreetingController : ControllerBase
     {
