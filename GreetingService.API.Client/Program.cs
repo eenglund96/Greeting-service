@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.Diagnostics;
+using System.Net;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text;
@@ -141,7 +142,7 @@ namespace GreetingService.API.Client
             }
         }
 
-        private static async Task GetGreetingsAsync()
+        private static async Task<IEnumerable<Greeting>> GetGreetingsAsync()
         {
             try
             {
@@ -158,12 +159,13 @@ namespace GreetingService.API.Client
                 }
 
                 Console.WriteLine();
+                return greetings;
             }
             catch (Exception e)
             {
                 Console.WriteLine($"Get greetings failed: {e.Message}\n");
             }
-
+            return Enumerable.Empty<Greeting>();
         }
 
         private static async Task GetGreetingAsync(Guid id)
@@ -240,13 +242,9 @@ namespace GreetingService.API.Client
 
         private static async Task DeleteGreetings()
         {
-<<<<<<< Updated upstream
-            var response = await _httpClient.GetAsync("http://localhost:5002/api/Greeting");
-            response.EnsureSuccessStatusCode();                                               
-=======
             var response = await _httpClient.GetAsync("api/Greeting");
             response.EnsureSuccessStatusCode();
->>>>>>> Stashed changes
+
             var responseBody = await response.Content.ReadAsStringAsync();
             var greetings = JsonSerializer.Deserialize<IList<Greeting>>(responseBody, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
@@ -291,8 +289,6 @@ namespace GreetingService.API.Client
                 Console.WriteLine($"Failed to export greetings. Reason: {e}.");
             }
         }
-<<<<<<< Updated upstream
-=======
 
         private static async Task RepeatCallsAsync(int count)
         {
@@ -322,6 +318,5 @@ namespace GreetingService.API.Client
                 Console.WriteLine($"Response: {response.StatusCode} - Call: {job} - latency: {end - start} ms - rate/s: {job / stopwatch.Elapsed.TotalSeconds} - Message: {greeting.Message}");
             });
         }
->>>>>>> Stashed changes
     }
 }
