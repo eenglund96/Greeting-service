@@ -25,8 +25,11 @@ namespace GreetingService.API.Client
 
         public static async Task Main(string[] args)
         {
+            var authParam = Convert.ToBase64String(Encoding.UTF8.GetBytes("eenglund:testing123!"));
+            _httpClient.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Basic", authParam);
             //_httpClient.BaseAddress = new Uri("http://localhost:5002/");
-            _httpClient.BaseAddress = new Uri("https://emelie-appservice-dev.azurewebsites.net/");
+            //_httpClient.BaseAddress = new Uri("https://emelie-appservice-dev.azurewebsites.net/");
+            _httpClient.BaseAddress = new Uri("https://emelie-function-dev.azurewebsites.net");
 
             Console.WriteLine("Welcome to command line Greeting client!");
             Console.WriteLine("Please enter the name of the greeting sender:");

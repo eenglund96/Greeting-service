@@ -1,5 +1,6 @@
 using GreetingService.Core;
 using GreetingService.Infrastructure;
+using Microsoft.Extensions.Logging.ApplicationInsights;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,13 +11,19 @@ builder.Services.AddControllers()
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-builder.Services.AddScoped<IGreetingRepository, FileGreetingRepository>(c =>
-{
-    var config = c.GetService<IConfiguration>();
-    return new FileGreetingRepository(config["FileRepositoryFilePath"]);
-});
+builder.Services.AddSingleton<IGreetingRepository, MemoryGreetingRepository>();
+
+//    (c =>
+//{
+//var config = c.GetService<IConfiguration>();
+//return new FileGreetingRepository(config["FileRepositoryFilePath"]);
+//});
 
 builder.Services.AddScoped<IUserService, AppSettingsUserService>();
+
+builder.Logging.AddFilter<ApplicationInsightsLoggerProvider>("", LogLevel.Information);
+builder.Services.AddApplicationInsightsTelemetry(builder.Configuration["APPINSIGHTS_CONNECTIONSTRING"]);
+
 
 var app = builder.Build();
 

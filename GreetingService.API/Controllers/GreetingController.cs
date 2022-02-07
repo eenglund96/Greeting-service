@@ -58,7 +58,7 @@ namespace GreetingService.API.Controllers
         }
 
         // PUT api/<GreetingController>/5
-        [HttpPut("{id}")]
+        [HttpPut]
         [ProducesResponseType(StatusCodes.Status202Accepted,Type = typeof(Greeting))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Put([FromBody] Greeting greeting)

@@ -4,9 +4,13 @@
     <TargetFramework>net6.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>8dd6c4cd-47d4-4b26-8bc2-69e1bf1cafc7</UserSecretsId>
+    <ApplicationInsightsResourceId>/subscriptions/5bb1b2d9-ed37-4ee3-9053-56954eaa90c7/resourceGroups/emelie-rg-dev/providers/microsoft.insights/components/Emelie-appinsights-dev</ApplicationInsightsResourceId>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.15.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.ApplicationInsights" Version="2.20.0" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.2.3" />
   </ItemGroup>
 

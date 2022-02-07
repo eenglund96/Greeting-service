@@ -11,7 +11,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreetingService.Infrastruct
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreetingService.Infrastructure.Test", "GreetingService.Infrastructure.Test\GreetingService.Infrastructure.Test.csproj", "{35427101-DB64-4860-A823-7F79CAFC3374}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "GreetingService.API.Client", "GreetingService.API.Client\GreetingService.API.Client.csproj", "{5088ADF1-0F36-4419-9D8E-13E6E1615938}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreetingService.API.Client", "GreetingService.API.Client\GreetingService.API.Client.csproj", "{5088ADF1-0F36-4419-9D8E-13E6E1615938}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GreetingService.API.Function", "GreetingService.API.Function\GreetingService.API.Function.csproj", "{741D2AED-AFA2-45E8-A033-77E964DE5D19}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1AEC6A80-1C02-4165-985C-FE3B83D310E9} = {1AEC6A80-1C02-4165-985C-FE3B83D310E9}
+		{5088ADF1-0F36-4419-9D8E-13E6E1615938} = {5088ADF1-0F36-4419-9D8E-13E6E1615938}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +45,10 @@ Global
 		{5088ADF1-0F36-4419-9D8E-13E6E1615938}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5088ADF1-0F36-4419-9D8E-13E6E1615938}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5088ADF1-0F36-4419-9D8E-13E6E1615938}.Release|Any CPU.Build.0 = Release|Any CPU
+		{741D2AED-AFA2-45E8-A033-77E964DE5D19}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{741D2AED-AFA2-45E8-A033-77E964DE5D19}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{741D2AED-AFA2-45E8-A033-77E964DE5D19}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{741D2AED-AFA2-45E8-A033-77E964DE5D19}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
