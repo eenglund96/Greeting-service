@@ -47,7 +47,7 @@ namespace GreetingService.API.Function
             _greetingRepository.Delete(idGuid);
 
          
-            return new OkObjectResult("Deleted greeting!");
+            return new OkObjectResult($"Deleted greeting with ID: {idGuid}!");
 
         }
     }
