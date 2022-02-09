@@ -32,5 +32,6 @@ namespace GreetingService.Infrastructure
             _logger.LogWarning("Invalid credentials for {username}", username);
             return false;
         }
+        //Adding a little comment. 
     }
 }
