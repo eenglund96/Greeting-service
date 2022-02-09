@@ -36,6 +36,9 @@ namespace GreetingService.API.Function
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
+            if (!_authHandler.IsAuthorized(req))
+                return new UnauthorizedResult();
+
             _greetingRepository.DeleteAll();
 
             return new OkObjectResult("All greetings have now been deleted!");

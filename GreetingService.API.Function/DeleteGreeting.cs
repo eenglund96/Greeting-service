@@ -40,6 +40,8 @@ namespace GreetingService.API.Function
             var body = await req.ReadAsStringAsync();
             var greeting = JsonSerializer.Deserialize<Greeting>(body);
 
+            if (!_authHandler.IsAuthorized(req))
+                return new UnauthorizedResult();
 
             if (!Guid.TryParse(id, out var idGuid))
                 return new BadRequestObjectResult($"{id} is not a valid Guid");

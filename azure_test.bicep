@@ -3,6 +3,7 @@ param location string = resourceGroup().location
 
 // storage accounts must be between 3 and 24 characters in length and use numbers and lower-case letters only
 var storageAccountName = '${substring(appName,0,10)}${uniqueString(resourceGroup().id)}' 
+var logStorageAccountName = '${substring(appName,0,7)}log${uniqueString(resourceGroup().id)}' 
 var hostingPlanName = '${appName}${uniqueString(resourceGroup().id)}'
 var appInsightsName = '${appName}${uniqueString(resourceGroup().id)}'
 var functionAppName = '${appName}'
@@ -10,6 +11,15 @@ var functionAppName = '${appName}'
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
+  location: location
+  kind: 'StorageV2'
+  sku: {
+    name: 'Standard_LRS'
+  }
+}
+
+resource logStorageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
+  name: logStorageAccountName
   location: location
   kind: 'StorageV2'
   sku: {
@@ -57,6 +67,18 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
         {
           name: 'AzureWebJobsStorage'
           value: 'DefaultEndpointsProtocol=https;AccountName=${storageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(storageAccount.id, storageAccount.apiVersion).keys[0].value}'
+        }
+        {
+          name: 'LogStorageAccount'
+          value: 'DefaultEndpointsProtocol=https;AccountName=${logStorageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(logStorageAccount.id, logStorageAccount.apiVersion).keys[0].value}'
+        }
+        {
+          name: 'eenglund'
+          value: 'testing123!'
+        }
+        {
+          name: 'WEBSITE_RUN_FROM_PACKAGE' 
+          value: '1'
         }
         {
           'name': 'FUNCTIONS_EXTENSION_VERSION'
