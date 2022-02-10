@@ -109,4 +109,4 @@ jobs:
           azcliversion: 2.30.0
           inlineScript: |
             az group create -l westeurope -n Emelie-rg-dev
-            az deployment group create --resource-group Emelie-rg-dev --template-file ./azure_test.bicep --parameters appName=emeliefunctiondev        
+            az deployment group create --resource-group Emelie-rg-dev --template-file ./azure_test.bicep --parameters appName=emeliefunctionapp        
