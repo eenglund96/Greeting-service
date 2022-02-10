@@ -82,7 +82,7 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
         }
         {
           name: 'WEBSITE_WEBDEPLOY_USE_SCM'
-          value: 'true'
+          value: 'True'
         }
         {
           'name': 'FUNCTIONS_EXTENSION_VERSION'
