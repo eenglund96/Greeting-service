@@ -57,7 +57,7 @@ namespace GreetingService.Infrastructure.Test
             public void get_should_return_empty_collection()
             {
                 var greetings = _repository.Get();
-                Assert.NotNull(greetings);
+                Assert.Empty(greetings);
                 Assert.NotEmpty(greetings);
                 Assert.Equal(_testData.Count(), greetings.Count());
             }
