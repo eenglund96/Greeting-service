@@ -13,9 +13,9 @@ namespace GreetingService.Infrastructure.UserService
 {
     public class BlobUserService : IUserService
     {
-        private const string _blobContainerName = "Users";
+        private const string _blobContainerName = "users";
         private readonly BlobContainerClient _blobContainerClient;
-        private const string _blobName = "Users.json";      
+        private const string _blobName = "users.json";      
         private readonly ILogger<BlobUserService> _logger;
 
         public BlobUserService(IConfiguration configuration, ILogger<BlobUserService> logger)
