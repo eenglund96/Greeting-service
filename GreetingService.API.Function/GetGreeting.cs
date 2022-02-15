@@ -45,7 +45,7 @@ namespace GreetingService.API.Function
             if (!Guid.TryParse(id, out var idGuid))
                 return new BadRequestObjectResult($"{id} is not a valid Guid");
 
-            var greeting = _greetingRepository.Get(idGuid);
+            var greeting = await _greetingRepository.GetAsync(idGuid);
 
             if (greeting == null)
                 return new NotFoundObjectResult("Not Found");

@@ -21,9 +21,9 @@ namespace GreetingService.API.Controllers
 
         // GET: api/<GreetingController>
         [HttpGet]
-        public IEnumerable<Greeting> Get()
+        public async Task <IEnumerable<Greeting>> Get()
         {
-            return _greetingRepository.Get();
+            return await _greetingRepository.GetAsync();
            
         }
 
@@ -31,9 +31,9 @@ namespace GreetingService.API.Controllers
         [HttpGet("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Greeting))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Get(Guid id)
+        public async Task <IActionResult> Get(Guid id)
         {
-            var greeting = _greetingRepository.Get(id);
+            var greeting = await _greetingRepository.GetAsync(id);
             if (greeting == null)
                 return NotFound();
 
@@ -44,11 +44,11 @@ namespace GreetingService.API.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(Greeting))]
         [ProducesResponseType(StatusCodes.Status409Conflict)]
-        public IActionResult Post ([FromBody] Greeting greeting)
+        public async Task <IActionResult> Post ([FromBody] Greeting greeting)
         {
             try
             {
-                _greetingRepository.Create(greeting);
+                await _greetingRepository.CreateAsync(greeting);
                 return Created("http://localhost:5002/api/Greeting", greeting);
             }
             catch (Exception)
@@ -61,11 +61,11 @@ namespace GreetingService.API.Controllers
         [HttpPut]
         [ProducesResponseType(StatusCodes.Status202Accepted,Type = typeof(Greeting))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Put([FromBody] Greeting greeting)
+        public async Task <IActionResult> Put([FromBody] Greeting greeting)
         {
             try
             {
-                _greetingRepository.Update(greeting);
+                await _greetingRepository.UpdateAsync(greeting);
                 return Accepted(greeting);
             }
             catch (Exception)
@@ -78,11 +78,11 @@ namespace GreetingService.API.Controllers
         [HttpDelete("{id}")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(Greeting))]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public IActionResult Delete(Guid id)
+        public async Task <IActionResult> DeleteAsync(Guid id)
         {
             try
             {
-            _greetingRepository.Delete(id);
+            await _greetingRepository.DeleteAsync(id);
                 return Ok();
             }
             catch (Exception)
@@ -93,9 +93,9 @@ namespace GreetingService.API.Controllers
 
         // DELETE api/<GreetingController>/5
         [HttpDelete]
-        public void DeleteAll()
+        public async Task DeleteAllAsync()
         {
-            _greetingRepository.DeleteAll();
+           await _greetingRepository.DeleteAllAsync();
         }
     }
 }

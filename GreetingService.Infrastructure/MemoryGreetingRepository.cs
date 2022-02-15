@@ -12,12 +12,12 @@ namespace GreetingService.Infrastructure
     {
         private readonly IList<Greeting> _repository = new List<Greeting>();
 
-        public void Create(Greeting greeting)
+        public async Task CreateAsync(Greeting greeting)
         {
             _repository.Add(greeting);
         }
 
-        public void Delete(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
             var greetings = _repository;
             var greeting = greetings?.FirstOrDefault(x => x.Id == id);
@@ -27,22 +27,22 @@ namespace GreetingService.Infrastructure
             _repository.Remove(greeting);
         }
 
-        public void DeleteAll()
+        public async Task DeleteAllAsync()
         {
             _repository.Clear();
         }
 
-        public Greeting Get(Guid id)
+        public async Task <Greeting> GetAsync(Guid id)
         {
             return _repository.FirstOrDefault(x => x.Id == id);
         }
 
-        public IEnumerable<Greeting> Get()
+        public async Task <IEnumerable<Greeting>> GetAsync()
         {
             return _repository;
         }
 
-        public void Update(Greeting greeting)
+        public async Task UpdateAsync(Greeting greeting)
         {
             var existingGreeting = _repository.FirstOrDefault(x => x.Id == greeting.Id);
 

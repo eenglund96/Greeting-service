@@ -46,7 +46,7 @@ namespace GreetingService.API.Function
             if (!Guid.TryParse(id, out var idGuid))
                 return new BadRequestObjectResult($"{id} is not a valid Guid");
 
-            _greetingRepository.Delete(idGuid);
+            await _greetingRepository.DeleteAsync(idGuid);
 
          
             return new OkObjectResult($"Deleted greeting with ID: {idGuid}!");
