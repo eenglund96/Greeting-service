@@ -48,7 +48,7 @@ namespace GreetingService.API.Function
             //    return new FileGreetingRepository(config["FileRepositoryFilePath"]);
             //});
 
-            builder.Services.AddScoped<IUserService, AppSettingsUserService>();
+            builder.Services.AddScoped<IUserService, BlobUserService>();
             builder.Services.AddScoped<IAuthHandler, BasicAuthHandler>();
         }
     }  
