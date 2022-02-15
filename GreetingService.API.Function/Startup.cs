@@ -40,7 +40,7 @@ namespace GreetingService.API.Function
                 c.AddSerilog(logger, true);
             });
 
-            builder.Services.AddSingleton<IGreetingRepository, MemoryGreetingRepository>();
+            builder.Services.AddSingleton<IGreetingRepository, BlobGreetingRepository>();
 
             //    (c =>
             //{
