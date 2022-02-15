@@ -1,6 +1,8 @@
 using GreetingService.API.Function.Authentication;
 using GreetingService.Core;
 using GreetingService.Infrastructure;
+using GreetingService.Infrastructure.GreetingRepository;
+using GreetingService.Infrastructure.UserService;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;

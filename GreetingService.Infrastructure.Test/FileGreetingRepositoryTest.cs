@@ -6,6 +6,7 @@ using System.Text.Json;
 using Xunit;
 using GreetingService.API.Core;
 using System.Threading.Tasks;
+using GreetingService.Infrastructure.GreetingRepository;
 
 namespace GreetingService.Infrastructure.Test
 {
