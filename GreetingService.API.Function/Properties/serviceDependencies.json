@@ -10,6 +10,10 @@
     "storage2": {
       "type": "storage",
       "connectionId": "LogStorageAccount"
+    },
+    "storage3": {
+      "type": "storage",
+      "connectionId": "LogStorageAccount"
     }
   }
 }
