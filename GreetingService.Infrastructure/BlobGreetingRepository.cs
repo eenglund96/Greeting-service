@@ -33,14 +33,26 @@ namespace GreetingService.Infrastructure
             await blob.UploadAsync(greetingBinary);
         }
 
-        public Task DeleteAllAsync()
+        public async Task DeleteAllAsync()
         {
-            throw new NotImplementedException();
+            var greetings = new List<Greeting>();
+            var blobs = _blobContainerClient.GetBlobsAsync();
+            await foreach (var blob in blobs)
+            {
+                var blobClient = _blobContainerClient.GetBlobClient(blob.Name);
+                var blobContent = await blobClient.DownloadContentAsync();
+                var greeting = blobContent.Value.Content.ToObjectFromJson<Greeting>();
+                greetings.Add(greeting);
+            }
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var blobClient = _blobContainerClient.GetBlobClient(id.ToString());
+            if (!await blobClient.ExistsAsync())
+                throw new Exception($"Greeting with id: {id} could not be found!");
+
+            await blobClient.DeleteIfExistsAsync();
         }
 
         public async Task<Greeting> GetAsync(Guid id)
