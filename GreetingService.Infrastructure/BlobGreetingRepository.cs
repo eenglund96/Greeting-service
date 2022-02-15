@@ -35,14 +35,11 @@ namespace GreetingService.Infrastructure
 
         public async Task DeleteAllAsync()
         {
-            var greetings = new List<Greeting>();
             var blobs = _blobContainerClient.GetBlobsAsync();
             await foreach (var blob in blobs)
             {
                 var blobClient = _blobContainerClient.GetBlobClient(blob.Name);
-                var blobContent = await blobClient.DownloadContentAsync();
-                var greeting = blobContent.Value.Content.ToObjectFromJson<Greeting>();
-                greetings.Add(greeting);
+                await blobClient.DeleteAsync();
             }
         }
 
