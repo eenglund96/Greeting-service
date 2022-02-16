@@ -108,10 +108,11 @@ namespace GreetingService.Infrastructure.GreetingRepository
             var previousGreeting = await GetAsync(greeting.Id);
             var previousGreetingPath = $"{previousGreeting.From}/{previousGreeting.To}/{previousGreeting.Id}";
             var previousGreetingBlobClient = _blobContainerClient.GetBlobClient(previousGreetingPath);
-            await previousGreetingBlobClient.DeleteAsync();
 
             if (!await previousGreetingBlobClient.ExistsAsync())
                 throw new Exception("The greeting you searched for could not be found!");
+
+            await previousGreetingBlobClient.DeleteAsync();
 
             var newGreetingPath = $"{greeting.From}/{greeting.To}/{greeting.Id}";
             var newGreetingBinary = new BinaryData(greeting, _jsonSerializerOptions);
