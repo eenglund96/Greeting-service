@@ -37,9 +37,7 @@ namespace GreetingService.API.Function
 
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
-            var body = await req.ReadAsStringAsync();
-            var greeting = JsonSerializer.Deserialize<Greeting>(body);
-
+         
             if (!_authHandler.IsAuthorized(req))
                 return new UnauthorizedResult();
 
