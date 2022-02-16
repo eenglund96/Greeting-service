@@ -8,6 +8,9 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Reflection.Metadata;
+using System.ComponentModel;
+
 
 namespace GreetingService.Infrastructure.GreetingRepository
 {
@@ -25,7 +28,8 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task CreateAsync(Greeting greeting)
         {
-            var blob = _blobContainerClient.GetBlobClient(greeting.Id.ToString());
+            var path = $"{greeting.From}/{greeting.To}/{greeting.Id}";
+            var blob = _blobContainerClient.GetBlobClient(path);
             if (await blob.ExistsAsync())
                 throw new Exception($"Greeting with id: {greeting.Id} already exists!");
 
@@ -45,19 +49,24 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task DeleteAsync(Guid id)
         {
-            var blobClient = _blobContainerClient.GetBlobClient(id.ToString());
-            if (!await blobClient.ExistsAsync())
+            var blobs = _blobContainerClient.GetBlobsAsync();
+            var blob = await blobs.FirstOrDefaultAsync(x => x.Name.EndsWith(id.ToString()));
+            if (blob == null)
                 throw new Exception($"Greeting with id: {id} could not be found!");
 
+            var blobClient = _blobContainerClient.GetBlobClient(blob.Name);
             await blobClient.DeleteIfExistsAsync();
         }
 
         public async Task<Greeting> GetAsync(Guid id)
         {
-            var blobClient = _blobContainerClient.GetBlobClient(id.ToString());
-            if (!await blobClient.ExistsAsync())
+            var blobs = _blobContainerClient.GetBlobsAsync();
+            var blob = await blobs.FirstOrDefaultAsync(x => x.Name.EndsWith(id.ToString()));
+
+            if (blob == null)
                 throw new Exception($"Greeting with id: {id} not found!");
 
+            var blobClient = _blobContainerClient.GetBlobClient(blob.Name);
             var blobContent = await blobClient.DownloadContentAsync();
             var greeting = blobContent.Value.Content.ToObjectFromJson<Greeting>();
             return greeting;
@@ -80,13 +89,18 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task UpdateAsync(Greeting greeting)
         {
-            var blobClient = _blobContainerClient.GetBlobClient(greeting.Id.ToString());
-            if (!await blobClient.ExistsAsync())
+            var previousGreeting = await GetAsync(greeting.Id);
+            var previousGreetingPath = $"{previousGreeting.From}/{previousGreeting.To}/{previousGreeting.Id}";
+            var previousGreetingBlobClient = _blobContainerClient.GetBlobClient(previousGreetingPath);
+            await previousGreetingBlobClient.DeleteAsync();
+
+            if (!await previousGreetingBlobClient.ExistsAsync())
                 throw new Exception("The greeting you searched for could not be found!");
 
-            await blobClient.DeleteIfExistsAsync();
-            var greetingBinary = new BinaryData(greeting, _jsonSerializerOptions);
-            await blobClient.UploadAsync(greetingBinary);
+            var newGreetingPath = $"{greeting.From}/{greeting.To}/{greeting.Id}";
+            var newGreetingBinary = new BinaryData(greeting, _jsonSerializerOptions);
+            var newGreetingBlobClient = _blobContainerClient.GetBlobClient(newGreetingPath);
+            await newGreetingBlobClient.UploadAsync(newGreetingBinary);
         }
     }
 }
