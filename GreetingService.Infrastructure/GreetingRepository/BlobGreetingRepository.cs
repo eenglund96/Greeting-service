@@ -17,12 +17,14 @@ namespace GreetingService.Infrastructure.GreetingRepository
     public class BlobGreetingRepository : IGreetingRepository
     {
         private const string _blobContainerName = "greetings";
+        private const string _blobCsvContainerName = "greetings-csv";
         private readonly BlobContainerClient _blobContainerClient;
         private readonly JsonSerializerOptions _jsonSerializerOptions = new() { WriteIndented = true };
+        private readonly string _connectionString;
         public BlobGreetingRepository(IConfiguration configuration)
         {
-            var connectionString = configuration["LogStorageAccount"];
-            _blobContainerClient = new BlobContainerClient(connectionString, _blobContainerName);
+            _connectionString = configuration["LogStorageAccount"];
+            _blobContainerClient = new BlobContainerClient(_connectionString, _blobContainerName);
             _blobContainerClient.CreateIfNotExists();
         }
 
@@ -39,22 +41,36 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task DeleteAllAsync()
         {
-            var blobs = _blobContainerClient.GetBlobsAsync();
+            await DeleteAllAsync(_blobContainerName);
+            await DeleteAllAsync(_blobCsvContainerName);
+        }
+
+        private async Task DeleteAllAsync(string containerName)
+        {
+            var blobContainerClient = new BlobContainerClient(_connectionString, containerName);
+            var blobs = blobContainerClient.GetBlobsAsync();
             await foreach (var blob in blobs)
             {
-                var blobClient = _blobContainerClient.GetBlobClient(blob.Name);
+                var blobClient = blobContainerClient.GetBlobClient(blob.Name);
                 await blobClient.DeleteAsync();
             }
         }
 
         public async Task DeleteAsync(Guid id)
         {
-            var blobs = _blobContainerClient.GetBlobsAsync();
+            await DeleteAsync(id, _blobContainerName);
+            await DeleteAsync(id, _blobCsvContainerName);
+        }
+
+        private async Task DeleteAsync(Guid id, string containerName)
+        {
+            var blobContainerClient = new BlobContainerClient(_connectionString, containerName);
+            var blobs = blobContainerClient.GetBlobsAsync();
             var blob = await blobs.FirstOrDefaultAsync(x => x.Name.EndsWith(id.ToString()));
             if (blob == null)
                 throw new Exception($"Greeting with id: {id} could not be found!");
 
-            var blobClient = _blobContainerClient.GetBlobClient(blob.Name);
+            var blobClient = blobContainerClient.GetBlobClient(blob.Name); //_blobContainerClient
             await blobClient.DeleteIfExistsAsync();
         }
 
