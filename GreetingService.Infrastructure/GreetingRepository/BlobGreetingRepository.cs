@@ -149,7 +149,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
                     Greeting greeting = await DownloadBlob(blob);
                     greetings.Add(greeting);
                 }
-                else if (string.IsNullOrEmpty(from) && !string.IsNullOrWhiteSpace(to) && blobNameParts.Equals(to))
+                else if (string.IsNullOrEmpty(from) && !string.IsNullOrWhiteSpace(to) && blobNameParts[1].Equals(to))
                 {
                     Greeting greeting = await DownloadBlob(blob);
                     greetings.Add(greeting);
