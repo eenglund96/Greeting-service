@@ -88,5 +88,27 @@ namespace GreetingService.Infrastructure.GreetingRepository
             greetings?.Clear();
             File.WriteAllText(_filePath, JsonSerializer.Serialize(greetings, _jsonSerializerOptions));
         }
+
+        public async Task<IEnumerable<Greeting>> GetAsync(string from, string to)
+        {
+            var greetings = await GetAsync();
+
+            if (!string.IsNullOrEmpty(from))
+            {
+                greetings = greetings.Where(x => x.From.Equals(from, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            if (!string.IsNullOrEmpty(to))
+            {
+                greetings = greetings.Where(x => x.To.Equals(from, StringComparison.OrdinalIgnoreCase)).ToList();
+            }
+
+            else
+            {
+                throw new Exception("You have encountered an Exception!");
+            }
+
+            return greetings;
+        }
     }
 }

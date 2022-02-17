@@ -119,5 +119,58 @@ namespace GreetingService.Infrastructure.GreetingRepository
             var newGreetingBlobClient = _blobContainerClient.GetBlobClient(newGreetingPath);
             await newGreetingBlobClient.UploadAsync(newGreetingBinary);
         }
+
+        public async Task<IEnumerable<Greeting>> GetAsync(string from, string to)
+        {
+            var prefix = "";
+            if (!string.IsNullOrEmpty(from))
+            {
+                prefix = from;
+                if (!string.IsNullOrEmpty(to))
+                {
+                    prefix = $"{prefix}/{to}";
+                }
+            }
+
+            var blobs = _blobContainerClient.GetBlobsAsync(prefix: prefix);
+
+            var greetings = new List<Greeting>();
+            await foreach (var blob in blobs)
+            {
+                var blobNameParts = blob.Name.Split('/');
+
+                if (!string.IsNullOrWhiteSpace(from) && !string.IsNullOrWhiteSpace(to) && blob.Name.StartsWith($"{from}/{to}/"))
+                {
+                    Greeting greeting = await DownloadBlob(blob);
+                    greetings.Add(greeting);
+                }
+                else if (!string.IsNullOrWhiteSpace(from) && string.IsNullOrWhiteSpace(to) && blob.Name.StartsWith($"{from}/"))
+                {
+                    Greeting greeting = await DownloadBlob(blob);
+                    greetings.Add(greeting);
+                }
+                else if (string.IsNullOrEmpty(from) && !string.IsNullOrWhiteSpace(to) && blobNameParts.Equals(to))
+                {
+                    Greeting greeting = await DownloadBlob(blob);
+                    greetings.Add(greeting);
+                }
+                else if (string.IsNullOrWhiteSpace(from) && string.IsNullOrWhiteSpace(to))
+                {
+                    Greeting greeting = await DownloadBlob(blob);
+                    greetings.Add(greeting);
+                }
+            }
+
+            return greetings;
+        }
+
+        private async Task<Greeting> DownloadBlob(Azure.Storage.Blobs.Models.BlobItem blob)
+        {
+            var blobClient = _blobContainerClient.GetBlobClient(blob.Name);
+            var blobContent = await blobClient.DownloadContentAsync();
+            var greeting = blobContent.Value.Content.ToObjectFromJson<Greeting>();
+
+            return greeting;
+        }
     }
 }
