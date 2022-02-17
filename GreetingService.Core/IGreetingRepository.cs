@@ -16,4 +16,5 @@ public interface IGreetingRepository
     public Task UpdateAsync(Greeting greeting);
     public Task DeleteAsync(Guid id);
     public Task DeleteAllAsync();
+    public Task DeleteAllAsync (string from, string to);
 }

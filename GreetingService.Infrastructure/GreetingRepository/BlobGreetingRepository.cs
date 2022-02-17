@@ -43,6 +43,8 @@ namespace GreetingService.Infrastructure.GreetingRepository
         {
             await DeleteAllAsync(_blobContainerName);
             await DeleteAllAsync(_blobCsvContainerName);
+            //await DeleteAllAsync(_blobContainerName);
+            //await DeleteAllAsync(_blobCsvContainerName);
         }
 
         private async Task DeleteAllAsync(string containerName)
@@ -171,6 +173,48 @@ namespace GreetingService.Infrastructure.GreetingRepository
             var greeting = blobContent.Value.Content.ToObjectFromJson<Greeting>();
 
             return greeting;
+        }
+
+        public async Task DeleteAllAsync(string from, string to)
+        {
+            var prefix = "";
+            if (!string.IsNullOrEmpty(from))
+            {
+                prefix = from;
+                if (!string.IsNullOrEmpty(to))
+                {
+                    prefix = $"{prefix}/{to}";
+                }
+            }
+
+            var blobs = _blobContainerClient.GetBlobsAsync(prefix: prefix);
+     
+
+            await foreach (var blob in blobs)
+            {
+                var blobNameParts = blob.Name.Split('/');
+
+                if (!string.IsNullOrWhiteSpace(from) && !string.IsNullOrWhiteSpace(to) && blob.Name.StartsWith($"{from}/{to}/"))
+                {
+                    var blobClient = _blobContainerClient.GetBlobClient(blob.Name);
+                    await blobClient.DeleteAsync();
+                }
+                else if (!string.IsNullOrWhiteSpace(from) && string.IsNullOrWhiteSpace(to) && blob.Name.StartsWith($"{from}/"))
+                {
+                    var blobClient = _blobContainerClient.GetBlobClient(blob.Name);
+                    await blobClient.DeleteAsync();
+                }
+                else if (string.IsNullOrEmpty(from) && !string.IsNullOrWhiteSpace(to) && blobNameParts[1].Equals(to))
+                {
+                    var blobClient = _blobContainerClient.GetBlobClient(blob.Name);
+                    await blobClient.DeleteAsync();
+                }
+                else if (string.IsNullOrWhiteSpace(from) && string.IsNullOrWhiteSpace(to))
+                {
+                    var blobClient = _blobContainerClient.GetBlobClient(blob.Name);
+                    await blobClient.DeleteAsync();
+                }
+            }
         }
     }
 }

@@ -70,5 +70,10 @@ namespace GreetingService.Infrastructure.GreetingRepository
          
             return greetings;
         }
+
+        public Task DeleteAllAsync(string from, string to)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
