@@ -63,16 +63,11 @@ namespace GreetingService.Infrastructure.GreetingRepository
                 greetings = greetings.Where(x => x.From.Equals(from, StringComparison.OrdinalIgnoreCase)).ToList();
             }
                
-            if (!string.IsNullOrEmpty(to))
+            else if (!string.IsNullOrEmpty(to))
             {
                 greetings = greetings.Where(x => x.To.Equals(from, StringComparison.OrdinalIgnoreCase)).ToList();
             }
-                
-            else
-            {
-                throw new Exception("You have encountered an Exception!");
-            }
-
+         
             return greetings;
         }
     }
