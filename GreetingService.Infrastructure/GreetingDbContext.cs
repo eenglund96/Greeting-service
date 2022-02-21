@@ -10,19 +10,16 @@ namespace GreetingService.Infrastructure
 {
     public class GreetingDbContext : DbContext
     {
-        public GreetingDbContext(DbContextOptions options) : base(options)
-        {
-        }
-
         public GreetingDbContext()
         {
         }
-
-        public DbSet<Greeting> Greetings { get; set; }
-
+        public GreetingDbContext(DbContextOptions options) : base(options)
+        {
+        }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(Environment.GetEnvironmentVariable("GreetingDbConnectionString"));
         }
+        public DbSet<Greeting> Greetings { get; set; }
     }
 }
