@@ -35,9 +35,13 @@ namespace GreetingService.Infrastructure.GreetingRepository
             throw new NotImplementedException();
         }
 
-        public Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var deletegreeting = await _greetingDbContext.Greetings.FirstOrDefaultAsync(x => x.Id == id);
+
+            _greetingDbContext.Greetings.Remove(deletegreeting);
+
+            _greetingDbContext.SaveChanges();
         }
 
         public async Task<Greeting> GetAsync(Guid id)
