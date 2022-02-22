@@ -25,8 +25,9 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task DeleteAllAsync()
         {
-           var greetings = await _greetingDbContext.Greetings.ToListAsync();
-         
+           var deleteGreetings = await _greetingDbContext.Greetings.ToListAsync();
+           //await deleteGreetings.RemoveAll();
+           await _greetingDbContext.SaveChangesAsync();
         }
 
         public Task DeleteAllAsync(string from, string to)
