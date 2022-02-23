@@ -43,7 +43,7 @@ namespace GreetingService.API.Function
                 c.AddSerilog(logger, true);
             });
 
-            builder.Services.AddSingleton<IGreetingRepository, BlobGreetingRepository>();
+            builder.Services.AddScoped<IGreetingRepository, BlobGreetingRepository>();
 
             //    (c =>
             //{
@@ -51,7 +51,7 @@ namespace GreetingService.API.Function
             //    return new FileGreetingRepository(config["FileRepositoryFilePath"]);
             //});
             builder.Services.AddScoped<IGreetingRepository, SqlGreetingRepository>();
-            builder.Services.AddScoped<IUserService, BlobUserService>();
+            builder.Services.AddScoped<IUserService, SqlUserService>();
             builder.Services.AddScoped<IAuthHandler, BasicAuthHandler>();
 
             builder.Services.AddDbContext<GreetingDbContext>(options =>
