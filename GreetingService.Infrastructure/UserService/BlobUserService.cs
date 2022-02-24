@@ -1,5 +1,6 @@
 ﻿using Azure.Storage.Blobs;
 using GreetingService.Core;
+using GreetingService.Core.Entities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -46,6 +47,36 @@ namespace GreetingService.Infrastructure.UserService
             }
 
             return false;
+        }
+
+        public async Task <User> GetUserAsync(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task <IEnumerable<User>> GetUsersAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task CreateUserAsync(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task UpdateUserAsync(User user)
+        {
+            throw new NotImplementedException();
+        }
+
+        public async Task DeleteUserAsync(string email)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task<bool> IsValidUserAsync(string username, string password)
+        {
+            throw new NotImplementedException();
         }
     }
 }

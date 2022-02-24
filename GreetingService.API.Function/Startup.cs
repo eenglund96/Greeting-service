@@ -43,7 +43,7 @@ namespace GreetingService.API.Function
                 c.AddSerilog(logger, true);
             });
 
-            builder.Services.AddScoped<IGreetingRepository, BlobGreetingRepository>();
+            //builder.Services.AddScoped<IGreetingRepository, BlobGreetingRepository>();
 
             //    (c =>
             //{

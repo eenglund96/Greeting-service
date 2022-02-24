@@ -18,7 +18,7 @@ namespace GreetingService.API.Function.Authentication
         {
             _userService = userService;
         }
-        public bool IsAuthorized(HttpRequest req)
+        public bool IsAuthorizedAsync(HttpRequest req)
         {
             try
             {

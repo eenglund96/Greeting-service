@@ -13,6 +13,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
 using System.Text.Json;
 using GreetingService.API.Function.Authentication;
+using System;
 
 namespace GreetingService.API.Function
 {
@@ -36,23 +37,26 @@ namespace GreetingService.API.Function
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
-            if (!_authHandler.IsAuthorized(req))
+            if (!_authHandler.IsAuthorizedAsync(req))
                 return new UnauthorizedResult();
-
-            var body = await req.ReadAsStringAsync();
-            var greeting = JsonSerializer.Deserialize<Greeting>(body);
 
             try
             {
+                var body = await req.ReadAsStringAsync();
+                var greeting = JsonSerializer.Deserialize<Greeting>(body);
                 await _greetingRepository.UpdateAsync(greeting);
+                return new AcceptedResult();
+            }
+
+            catch (ArgumentException ex)
+            {
+                return new BadRequestObjectResult(ex.Message);
             }
 
             catch
             {
                 return new NotFoundResult();
             }
-     
-            return new AcceptedResult();
         }
     }
 }

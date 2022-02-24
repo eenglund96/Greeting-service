@@ -10,7 +10,23 @@ namespace GreetingService.Core.Entities
     {
         public string FirstName { get; set; }
         public string LastName { get; set; }
-        public string Email { get; set; }
+
+        private string _email;
+        public string Email
+        {
+            get
+            {
+                return _email;
+            }
+
+            set
+            {
+                EmailValidator.IsValid(value);
+         
+                _email = value;
+            }
+        }
+
         public string Password { get; set; }
         public DateTime Created { get; set; } 
         public DateTime Updated { get; set; }
