@@ -9,7 +9,7 @@ namespace GreetingService.Core
 {
     public class EmailValidator
     {
-        private static Regex _regex { get; set; } = new Regex(@"^[a-zA-Z0-9\._-]{5,25}.@.[a-z]{2,12}.(com|org|co\.in|net)");
+        private static Regex _regex { get; set; } = new Regex(@"^[a-zA-Z0-9\._-]{2,25}.@.[a-z]{1,12}.(com|org|co\.in|net|se|uk)");
 
         public static bool IsValid(string email)
         {
