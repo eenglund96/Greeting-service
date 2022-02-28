@@ -18,7 +18,7 @@ namespace GreetingService.API.Function.Authentication
         {
             _userService = userService;
         }
-        public bool IsAuthorizedAsync(HttpRequest req)
+        public async Task<bool> IsAuthorizedAsync(HttpRequest req)
         {
             try
             {
@@ -33,7 +33,7 @@ namespace GreetingService.API.Function.Authentication
                                             .Split(':', 2);
                         if (credentials.Length == 2)
                         {
-                            if (_userService.IsValidUser(credentials[0], credentials[1]))
+                            if (await _userService.IsValidUserAsync(credentials[0], credentials[1]))
                             {
                                 return true;
                             }

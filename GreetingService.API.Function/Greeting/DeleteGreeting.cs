@@ -38,7 +38,7 @@ namespace GreetingService.API.Function
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
          
-            if (!_authHandler.IsAuthorizedAsync(req))
+            if (!await _authHandler.IsAuthorizedAsync(req))
                 return new UnauthorizedResult();
 
             if (!Guid.TryParse(id, out var idGuid))
