@@ -15,7 +15,7 @@ namespace GreetingService.Core
         {
             if (!_regex.IsMatch(email))
             {
-                throw new Exception("The email address is not valid!");
+                throw new ArgumentException("The email address is not valid!");
             }
 
             return true;

@@ -47,7 +47,7 @@ namespace GreetingService.API.Function
                 return new AcceptedResult();
             }
 
-            catch (Exception ex)
+            catch (ArgumentException ex)
             {
                 return new BadRequestObjectResult(ex.Message);
             }

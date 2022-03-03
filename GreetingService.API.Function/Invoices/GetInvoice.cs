@@ -30,7 +30,7 @@ namespace GreetingService.API.Function.Invoices
 
         [FunctionName("GetInvoice")]
         [OpenApiOperation(operationId: "Run", tags: new[] { "Invoice" })]
-        [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(Invoice), Description = "The OK response")]
+        [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.Accepted, Description = "Accepted")]
         public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "invoice/{email}/{year}/{month}")] HttpRequest req, string email, int year, int month)
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
