@@ -13,19 +13,20 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json;
 using GreetingService.API.Function.Authentication;
 using System;
+using GreetingService.Core.Enum;
 
 namespace GreetingService.API.Function
 {
     public class PostGreeting
     {
         private readonly ILogger<PostGreeting> _logger;
-        private readonly IGreetingRepository _greetingRepository;
+        private readonly IMessagingService _messagingService;
         private readonly IAuthHandler _authHandler;
 
-        public PostGreeting(ILogger<PostGreeting> log, IGreetingRepository greetingRepository, IAuthHandler authHandler)
+        public PostGreeting(ILogger<PostGreeting> log, IMessagingService messagingService, IAuthHandler authHandler)
         {
             _logger = log;
-            _greetingRepository = greetingRepository;
+            _messagingService = messagingService;
             _authHandler = authHandler;
         }
 
@@ -39,12 +40,11 @@ namespace GreetingService.API.Function
             if (!await _authHandler.IsAuthorizedAsync(req))
                 return new UnauthorizedResult();
 
+            Greeting greeting;
             try
             {
                 var body = await req.ReadAsStringAsync();
-                var greeting = JsonSerializer.Deserialize<Greeting>(body);
-                await _greetingRepository.CreateAsync(greeting);
-                return new AcceptedResult();
+                greeting = JsonSerializer.Deserialize<Greeting>(body);
             }
 
             catch (ArgumentException ex)
@@ -52,11 +52,17 @@ namespace GreetingService.API.Function
                 return new BadRequestObjectResult(ex.Message);
             }
 
+            try
+            {
+                await _messagingService.SendAsync(greeting, MessagingServiceSubject.NewGreeting);
+            }
+
             catch
             {
                 return new ConflictResult();
-
             }
+
+            return new AcceptedResult();
         }
     }
 }

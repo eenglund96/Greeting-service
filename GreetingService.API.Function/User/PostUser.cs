@@ -40,12 +40,10 @@ namespace GreetingService.API.Function
             if (!await _authHandler.IsAuthorizedAsync(req))
                 return new UnauthorizedResult();
 
+            User user;
             try
             {
-                var user = JsonSerializer.Deserialize<User>(req.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                await _userService.CreateUserAsync(user);
-                var createdUser = await _userService.GetUserAsync(user.Email);
-                return new OkObjectResult(createdUser);
+                user = JsonSerializer.Deserialize<User>(req.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });        
             }
 
             catch (ArgumentException ex)
@@ -57,6 +55,9 @@ namespace GreetingService.API.Function
                 return new ConflictResult();
             }
 
+            await _userService.CreateUserAsync(user);
+            var createdUser = await _userService.GetUserAsync(user.Email);
+            return new OkObjectResult(createdUser);
         }
     }
 }

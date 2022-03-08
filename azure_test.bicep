@@ -11,6 +11,7 @@ var appInsightsName = '${appName}${uniqueString(resourceGroup().id)}'
 var functionAppName = '${appName}'
 var sqlServerName = '${appName}sqlserver'
 var sqlDbName = '${appName}sqldb'
+var serviceBusName = 'emelie-sb-dev'
 
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
@@ -65,8 +66,8 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
     siteConfig: {
       appSettings: [
         {
-          'name': 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          'value': appInsights.properties.InstrumentationKey
+          name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
+          value: appInsights.properties.InstrumentationKey
         }
         {
           name: 'AzureWebJobsStorage'
@@ -85,12 +86,12 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
           value: '1'
         }
         {
-          'name': 'FUNCTIONS_EXTENSION_VERSION'
-          'value': '~4'
+          name: 'FUNCTIONS_EXTENSION_VERSION'
+          value: '~4'
         }
         {
-          'name': 'FUNCTIONS_WORKER_RUNTIME'
-          'value': 'dotnet'
+          name: 'FUNCTIONS_WORKER_RUNTIME'
+          value: 'dotnet'
         }
         {
           name: 'WEBSITE_CONTENTAZUREFILECONNECTIONSTRING'
@@ -99,6 +100,10 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
         {
           name: 'GreetingDbConnectionString'
           value: 'Server=tcp:${reference(sqlServer.id).fullyQualifiedDomainName},1433;Initial Catalog=${sqlDbName};Persist Security Info=False;User Id=${sqlAdminUser};Password=\'${sqlAdminPassword}\';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+        }
+        {
+          name: 'ServiceBusConnectionString'
+          value: 'Endpoint=sb://emelie-sb-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ePE+aC4YjNQL6+SaN+Sqq5nGiMlGxS5wQmO+y/f+kMI='
         }
       ]
     }
@@ -132,5 +137,30 @@ resource sqlServer 'Microsoft.Sql/servers@2019-06-01-preview' = {
     }
   }
 }
+  resource serviceBusNamespace 'Microsoft.ServiceBus/namespaces@2018-01-01-preview' = {
+    name: serviceBusName
+    location: location
+    sku: {
+      name: 'Standard'
+    }
+
+    resource mainTopic 'topics@2021-06-01-preview' = {
+      name: 'main'
+  
+      resource greetingCreateSubscription 'subscriptions@2021-06-01-preview' = {
+        name: 'greeting_create'
+  
+        resource rule 'rules@2021-06-01-preview' = {
+          name: 'subject'
+          properties: {
+            correlationFilter: {
+              label: 'NewGreeting'
+            }
+            filterType: 'CorrelationFilter'
+          }
+        }
+      }
+    }
+  }  
 
 
