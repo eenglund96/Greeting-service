@@ -30,7 +30,7 @@ namespace GreetingService.API.Function
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to insert Greeting to IGreetingRepository", ex);
+                _logger.LogError("Failed to update Greeting in IGreetingRepository", ex);
                 throw;
             }
         }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using GreetingService.API.Function.Authentication;
 using GreetingService.Core;
 using GreetingService.Core.Entities;
+using GreetingService.Core.Enum;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
@@ -13,27 +14,29 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.Azure.WebJobs.Extensions.OpenApi.Core.Attributes;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace GreetingService.API.Function
 {
-    public class PostUser
+    public class PutUser
     {
-        private readonly ILogger<PostUser> _logger;
+        private readonly ILogger<PutUser> _logger;
         private readonly IAuthHandler _authHandler;
-        private readonly IUserService _userService;
+        private readonly IMessagingService _messagingService;
 
-        public PostUser(ILogger<PostUser> log, IAuthHandler authHandler, IUserService userService)
+        public PutUser(ILogger<PutUser> log, IAuthHandler authHandler, IMessagingService messagingService)
         {
             _logger = log;
             _authHandler = authHandler;
-            _userService = userService;
+            _messagingService = messagingService;
         }
 
-        [FunctionName("PostUser")]
+        [FunctionName("PutUser")]
         [OpenApiOperation(operationId: "Run", tags: new[] { "User" })]
         [OpenApiResponseWithBody(statusCode: HttpStatusCode.OK, contentType: "application/json", bodyType: typeof(User), Description = "The OK response")]
         [OpenApiResponseWithoutBody(statusCode: HttpStatusCode.NotFound, Description = "Not found")]
-        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "post", Route = "user")] HttpRequest req)
+        public async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "put", Route = "user/{email}")] HttpRequest req, string email)
         {
             _logger.LogInformation("C# HTTP trigger function processed a request.");
 
@@ -43,21 +46,22 @@ namespace GreetingService.API.Function
             User user;
             try
             {
-                user = JsonSerializer.Deserialize<User>(req.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });        
+                user = JsonSerializer.Deserialize<User>(req.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }); 
             }
 
             catch (ArgumentException ex)
             {
                 return new BadRequestObjectResult(ex.Message);
             }
+
             catch
             {
-                return new ConflictResult();
+                return new NotFoundResult();
             }
 
-            await _userService.CreateUserAsync(user);
-            var createdUser = await _userService.GetUserAsync(user.Email);
-            return new OkObjectResult(createdUser);
+            await _messagingService.SendAsync(user, MessagingServiceSubject.UpdateUser);
+            //var updatedUser = await _userService.GetUserAsync(user.Email);
+            return new OkResult();
         }
     }
 }
