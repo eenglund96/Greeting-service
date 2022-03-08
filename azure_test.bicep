@@ -11,7 +11,7 @@ var appInsightsName = '${appName}${uniqueString(resourceGroup().id)}'
 var functionAppName = '${appName}'
 var sqlServerName = '${appName}sqlserver'
 var sqlDbName = '${appName}sqldb'
-var serviceBusName = 'emelie-sb-dev'
+var serviceBusName = '${appName}servicebus'
 
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
@@ -103,7 +103,7 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
         }
         {
           name: 'ServiceBusConnectionString'
-          value: 'Endpoint=sb://emelie-sb-dev.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=ePE+aC4YjNQL6+SaN+Sqq5nGiMlGxS5wQmO+y/f+kMI='
+          value: listKeys('${serviceBusNamespace.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBusNamespace.apiVersion).primaryConnectionString
         }
       ]
     }
