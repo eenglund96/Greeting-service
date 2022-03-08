@@ -21,14 +21,14 @@ namespace GreetingService.API.Function
     public class PutGreeting
     {
         private readonly ILogger<PutGreeting> _logger;
-        private readonly IGreetingRepository _greetingRepository;
+        private readonly IMessagingService _messagingService;
         private readonly IAuthHandler _authHandler;
 
-        public PutGreeting(ILogger<PutGreeting> log, IGreetingRepository greetingRepository, IAuthHandler authHandler)
+        public PutGreeting(ILogger<PutGreeting> log, IMessagingService messagingService, IAuthHandler authHandler)
         {
             _logger = log;
-            _greetingRepository = greetingRepository;
             _authHandler = authHandler;
+            _messagingService = messagingService;
         }
 
         [FunctionName("PutGreeting")]
