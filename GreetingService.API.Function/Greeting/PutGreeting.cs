@@ -14,6 +14,7 @@ using Microsoft.OpenApi.Models;
 using System.Text.Json;
 using GreetingService.API.Function.Authentication;
 using System;
+using GreetingService.Core.Enum;
 
 namespace GreetingService.API.Function
 {
@@ -40,12 +41,11 @@ namespace GreetingService.API.Function
             if (!await _authHandler.IsAuthorizedAsync(req))
                 return new UnauthorizedResult();
 
+            Greeting greeting;
             try
             {
                 var body = await req.ReadAsStringAsync();
-                var greeting = JsonSerializer.Deserialize<Greeting>(body);
-                await _greetingRepository.UpdateAsync(greeting);
-                return new AcceptedResult();
+                greeting = JsonSerializer.Deserialize<Greeting>(body);
             }
 
             catch (ArgumentException ex)
@@ -53,10 +53,16 @@ namespace GreetingService.API.Function
                 return new BadRequestObjectResult(ex.Message);
             }
 
+            try
+            {
+                await _messagingService.SendAsync(greeting, MessagingServiceSubject.UpdateGreeting);
+            }
             catch
             {
                 return new NotFoundResult();
             }
+
+            return new AcceptedResult();
         }
     }
 }
