@@ -160,6 +160,19 @@ resource sqlServer 'Microsoft.Sql/servers@2019-06-01-preview' = {
           }
         }
       }
+      resource greetingComputeInvoiceSubscription 'subscriptions@2021-06-01-preview' = {
+        name: 'greeting_compute_invoice'
+  
+        resource rule 'rules@2021-06-01-preview' = {
+          name: 'subject'
+          properties: {
+            correlationFilter: {
+              label: 'NewGreeting'
+            }
+            filterType: 'CorrelationFilter'
+          }
+        }
+      }
     }
   }  
 
