@@ -39,10 +39,6 @@ namespace GreetingService.Infrastructure
             var invoice = await _greetingDbContext.Invoices.Include(x => x.Greetings)
                                                            .Include(x => x.Sender)
                                                            .FirstOrDefaultAsync(x => x.Year == year && x.Month == month && x.Sender.Email.Equals(email));
-            //if (invoice == null)
-            //{
-            //    throw new Exception("An exception occured!");
-            //}
 
             return invoice;
         }

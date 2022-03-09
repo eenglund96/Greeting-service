@@ -46,6 +46,10 @@ namespace GreetingService.Infrastructure
                 .HasForeignKey(x => x.To)
                 .IsRequired()
                 .OnDelete(DeleteBehavior.ClientCascade);
+
+            modelBuilder.Entity<Invoice>()
+               .Property(x => x.Id)
+               .ValueGeneratedOnAdd();
         }
         public DbSet<Greeting> Greetings { get; set; }
 

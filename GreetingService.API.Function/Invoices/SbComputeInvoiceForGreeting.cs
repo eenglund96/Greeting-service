@@ -70,7 +70,7 @@ namespace GreetingService.API.Function.Invoices
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to compute invoice for new greeting {id}}", greeting.Id);
+                _logger.LogError(ex, "Failed to compute invoice for new greeting {id}", greeting.Id);
                 throw;
             }
         }
