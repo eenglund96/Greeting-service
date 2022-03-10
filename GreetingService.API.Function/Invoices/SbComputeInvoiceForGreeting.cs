@@ -41,11 +41,14 @@ namespace GreetingService.API.Function.Invoices
                     {
                         invoice = new Invoice
                         {
-                            Greetings = new[] { greeting },
                             Month = greeting.Timestamp.Month,
                             Year = greeting.Timestamp.Year,
                             Sender = user,
                         };
+                        await _invoiceService.CreateOrUpdateInvoiceAsync(invoice);
+
+                        invoice = await _invoiceService.GetInvoiceAsync(greeting.From, greeting.Timestamp.Year, greeting.Timestamp.Month);
+                        invoice.Greetings = invoice.Greetings.Append(greeting).ToList();
                         await _invoiceService.CreateOrUpdateInvoiceAsync(invoice);
                     }
                     catch (Exception ex)
