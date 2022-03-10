@@ -16,6 +16,11 @@ namespace GreetingService.Infrastructure.UserService
             { "asvensson","test2!" },
         };
 
+        public Task ApproveUserAsync(string approvalCode)
+        {
+            throw new NotImplementedException();
+        }
+
         public async Task CreateUserAsync(User user)
         {
             throw new NotImplementedException();
@@ -48,6 +53,11 @@ namespace GreetingService.Infrastructure.UserService
         }
 
         public Task<bool> IsValidUserAsync(string username, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RejectUserAsync(string approvalCode)
         {
             throw new NotImplementedException();
         }

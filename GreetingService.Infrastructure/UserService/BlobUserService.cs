@@ -78,5 +78,15 @@ namespace GreetingService.Infrastructure.UserService
         {
             throw new NotImplementedException();
         }
+
+        public Task ApproveUserAsync(string approvalCode)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Task RejectUserAsync(string approvalCode)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

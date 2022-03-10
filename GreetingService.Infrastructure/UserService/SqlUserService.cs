@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using static GreetingService.Core.Entities.User;
 
 namespace GreetingService.Infrastructure.UserService
 {
@@ -21,8 +22,17 @@ namespace GreetingService.Infrastructure.UserService
         }
         public async Task CreateUserAsync(User user)
         {
+            if (await _greetingDbContext.Users.AnyAsync(x => x.Email == user.Email && x.ApprovalStatus == UserApprovalStatus.Approved))
+                return;
+
+            var existingUnapprovedUser = await _greetingDbContext.Users.FirstOrDefaultAsync(x => x.Email == user.Email && x.ApprovalStatus != UserApprovalStatus.Approved);
+            if (existingUnapprovedUser != null)
+                _greetingDbContext.Users.Remove(existingUnapprovedUser);
+
             user.Created = DateTime.Now;
             user.Updated = DateTime.Now;
+            user.ApprovalStatus = UserApprovalStatus.Pending;
+            user.ApprovalStatusNote = "Awaiting approval from admin!";
             await _greetingDbContext.Users.AddAsync(user);
             await _greetingDbContext.SaveChangesAsync();
         }
@@ -95,6 +105,16 @@ namespace GreetingService.Infrastructure.UserService
                 return true;
 
             return false;
+        }
+
+        public async Task ApproveUserAsync(string approvalCode)
+        {
+            //should call the approval user endpoint in GreetingService API
+        }
+
+        public async Task RejectUserAsync(string approvalCode)
+        {
+            throw new NotImplementedException();
         }
     }
 }

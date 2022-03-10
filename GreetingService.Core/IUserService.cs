@@ -16,6 +16,8 @@ namespace GreetingService.Core
         public Task CreateUserAsync(User user);
         public Task UpdateUserAsync(User user);
         public Task DeleteUserAsync(string email);
+        public Task ApproveUserAsync(string approvalCode);
+        public Task RejectUserAsync(string approvalCode);
 
     }
 }
