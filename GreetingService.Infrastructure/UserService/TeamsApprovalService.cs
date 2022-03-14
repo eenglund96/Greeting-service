@@ -35,7 +35,7 @@ namespace GreetingService.Infrastructure.UserService
 						""sections"": [
 							{{
 									""title"": ""**Pending approval for admin Emelie Englund**"",
-								""activityImage"": ""https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/User_font_awesome.svg/1024px-User_font_awesome.svg.png?20160212005950"",
+								""activityImage"": ""https://upload.wikimedia.org/wikipedia/commons/5/51/Mr._Smiley_Face.svg"",
 								""activityTitle"": ""Approve new user in GreetingService: {user.Email}"",
 								""activitySubtitle"": ""{user.FirstName} {user.LastName}"",
 								""facts"": [
