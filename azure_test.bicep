@@ -107,7 +107,7 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
         }
         {
           name: 'GreetingServiceBaseUrl'
-          value: 'https://emelie-appservice-dev.azurewebsites.net' 
+          value: 'https://emeliefunctiondev.azurewebsites.net' 
         }
       ]
     }

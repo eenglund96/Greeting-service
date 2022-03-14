@@ -29,10 +29,10 @@ namespace GreetingService.Core.Entities
         }
 
         public string Password { get; set; }
-        public DateTime Created { get; set; } 
+        public DateTime Created { get; set; } = DateTime.Now;
         public DateTime Updated { get; set; }
         public UserApprovalStatus ApprovalStatus { get; set; }
-        public string ApprovalStatusNote { get; set; }
+        public string? ApprovalStatusNote { get; set; }
         public string ApprovalCode { get; set; } = Convert.ToBase64String(RandomNumberGenerator.GetBytes(64)).Replace("/", "").Replace("?", "");
         public DateTime ApprovalExpiry { get; set; } = DateTime.Now.AddDays(1);
 

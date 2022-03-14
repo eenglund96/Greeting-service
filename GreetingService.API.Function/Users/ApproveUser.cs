@@ -39,6 +39,7 @@ namespace GreetingService.API.Function.Users
             }
             catch (Exception ex)
             {
+                _logger?.LogError(ex, "Failed to approve user!");
                 return new NotFoundObjectResult(ex.Message);
             }
            

@@ -75,6 +75,8 @@ namespace GreetingService.Infrastructure.UserService
                 var responseContent = await response.Content?.ReadAsStringAsync();
                 _logger.LogError("Failed to send approval to Microsoft Teams for user {email}. Received this response message: {response}", user.Email, responseContent ?? "null");
             }
+
+			response.EnsureSuccessStatusCode();
         }
     }
 }

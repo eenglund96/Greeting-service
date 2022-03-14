@@ -120,7 +120,11 @@ namespace GreetingService.Infrastructure.UserService
         {
             var user = await _greetingDbContext.Users.FirstOrDefaultAsync(x => x.ApprovalStatus == UserApprovalStatus.Pending && x.ApprovalCode.Equals(approvalCode) && x.ApprovalExpiry > DateTime.Now);
             if (user == null)
+            {
+                _logger.LogError($"User with approval code: {approvalCode} could not be found!");
                 throw new Exception($"User with approval code: {approvalCode} could not be found!");
+
+            }
 
             return user;
         }
