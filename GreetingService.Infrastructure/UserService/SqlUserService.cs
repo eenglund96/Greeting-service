@@ -112,7 +112,7 @@ namespace GreetingService.Infrastructure.UserService
             var user = await GetUserForApprovalAsync(approvalCode);
 
             user.ApprovalStatus = UserApprovalStatus.Approved;
-            user.ApprovalStatusNote = $"Approved by an administrator at {DateTime.Now:0}";
+            user.ApprovalStatusNote = $"Approved by an administrator at {DateTime.Now:O}";  
             await _greetingDbContext.SaveChangesAsync();
         }
 
@@ -134,7 +134,7 @@ namespace GreetingService.Infrastructure.UserService
             var user = await GetUserForApprovalAsync(approvalCode);
 
             user.ApprovalStatus = UserApprovalStatus.Rejected;
-            user.ApprovalStatusNote = $"The user was rejected by an administrator at {DateTime.Now:0}";
+            user.ApprovalStatusNote = $"The user was rejected by an administrator at {DateTime.Now:O}";
             await _greetingDbContext.SaveChangesAsync();
         }
     }
