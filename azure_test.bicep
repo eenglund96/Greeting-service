@@ -105,6 +105,10 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
           name: 'ServiceBusConnectionString'
           value: listKeys('${serviceBusNamespace.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBusNamespace.apiVersion).primaryConnectionString
         }
+        {
+          name: 'GreetingServiceBaseUrl'
+          value: 'https://emelie-appservice-dev.azurewebsites.net/' 
+        }
       ]
     }
   }

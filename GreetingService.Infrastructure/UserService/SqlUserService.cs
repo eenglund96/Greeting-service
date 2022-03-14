@@ -109,12 +109,29 @@ namespace GreetingService.Infrastructure.UserService
 
         public async Task ApproveUserAsync(string approvalCode)
         {
-            //should call the approval user endpoint in GreetingService API
+            var user = await GetUserForApprovalAsync(approvalCode);
+
+            user.ApprovalStatus = UserApprovalStatus.Approved;
+            user.ApprovalStatusNote = $"Approved by an administrator at {DateTime.Now:0}";
+            await _greetingDbContext.SaveChangesAsync();
+        }
+
+        private async Task<User> GetUserForApprovalAsync(string approvalCode)
+        {
+            var user = await _greetingDbContext.Users.FirstOrDefaultAsync(x => x.ApprovalStatus == UserApprovalStatus.Pending && x.ApprovalCode.Equals(approvalCode) && x.ApprovalExpiry > DateTime.Now);
+            if (user == null)
+                throw new Exception($"User with approval code: {approvalCode} could not be found!");
+
+            return user;
         }
 
         public async Task RejectUserAsync(string approvalCode)
         {
-            throw new NotImplementedException();
+            var user = await GetUserForApprovalAsync(approvalCode);
+
+            user.ApprovalStatus = UserApprovalStatus.Rejected;
+            user.ApprovalStatusNote = $"The user was rejected by an administrator at {DateTime.Now:0}";
+            await _greetingDbContext.SaveChangesAsync();
         }
     }
 }
