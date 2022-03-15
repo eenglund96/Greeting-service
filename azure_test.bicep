@@ -12,6 +12,8 @@ var functionAppName = '${appName}'
 var sqlServerName = '${appName}sqlserver'
 var sqlDbName = '${appName}sqldb'
 var serviceBusName = '${appName}servicebus'
+var keyVaultName = '${appName}kv'
+var asurgentTenantId = '9583541d-47a0-4deb-9e14-541050ac8bc1'
 
 
 resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
@@ -191,6 +193,58 @@ resource sqlServer 'Microsoft.Sql/servers@2019-06-01-preview' = {
         }
       }
     }
-  }  
+  }
+  resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' = {
+    name: keyVaultName
+    location: location
+    properties: {
+      sku: {
+        family: 'A'
+        name: 'standard'
+      }
+      tenantId: asurgentTenantId
+      accessPolicies:[
+        {
+          permissions:{
+            secrets:[
+              'get'
+              'list'
+            ]
+          }
+          objectId: functionApp.identity.principalId
+          tenantId: asurgentTenantId
+        }
+      ]
+    }
+  
+    resource loggingStorageAccountSecret 'secrets@2021-11-01-preview' = {
+      name: 'LoggingStorageAccount'
+      properties: {
+        value: 'DefaultEndpointsProtocol=https;AccountName=${logStorageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(logStorageAccount.id, logStorageAccount.apiVersion).keys[0].value}'
+      }
+    }
+    
+    resource greetingDbConnectionStringSecret 'secrets@2021-11-01-preview' = {
+      name: 'GreetingDbConnectionString'
+      properties: {
+        value: 'Data Source=tcp:${reference(sqlServer.id).fullyQualifiedDomainName},1433;Initial Catalog=${sqlDbName};User Id=${sqlAdminUser};Password=\'${sqlAdminPassword}\';'
+      }
+    }
+  
+    resource serviceBusConnectionStringSecret 'secrets@2021-11-01-preview' = {
+      name: 'ServiceBusConnectionString'
+      properties: {
+        value: listKeys('${serviceBusNamespace.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBusNamespace.apiVersion).primaryConnectionString
+      }
+    }
+  
+    resource greetingServiceBaseUrlSecret 'secrets@2021-11-01-preview' = {
+      name: 'GreetingServiceBaseUrl'
+      properties: {
+        value: 'https://${appName}.azurewebsites.net'
+      }
+    }
+  }
+    
 
 

@@ -11,6 +11,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
+using System;
 using System.Reflection;
 
 [assembly: FunctionsStartup(typeof(GreetingService.API.Function.Startup))]
@@ -68,6 +69,10 @@ namespace GreetingService.API.Function
                 var serviceBusClient = new ServiceBusClient(config["ServiceBusConnectionString"]);
                 return serviceBusClient.CreateSender("main");
             });
+        }
+        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
+        {
+            builder.ConfigurationBuilder.AddAzureKeyVault(Environment.GetEnvironmentVariable("KeyVaultUri"));
         }
     }  
 }

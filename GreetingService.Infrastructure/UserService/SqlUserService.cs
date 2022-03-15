@@ -111,6 +111,12 @@ namespace GreetingService.Infrastructure.UserService
         {
             var user = await GetUserForApprovalAsync(approvalCode);
 
+            //if (user.ApprovalStatus == UserApprovalStatus.Rejected)
+            //{
+            //    _logger.LogError("This user has already been rejected.");
+            //    throw new Exception("This user has already been rejected.");
+            //};
+
             user.ApprovalStatus = UserApprovalStatus.Approved;
             user.ApprovalStatusNote = $"Approved by an administrator at {DateTime.Now:O}";  
             await _greetingDbContext.SaveChangesAsync();
