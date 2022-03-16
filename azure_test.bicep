@@ -214,11 +214,21 @@ resource sqlServer 'Microsoft.Sql/servers@2019-06-01-preview' = {
           objectId: functionApp.identity.principalId
           tenantId: asurgentTenantId
         }
+        {
+          permissions:{
+            secrets:[
+              'get'
+              'list'
+            ]
+          }
+          objectId: '1c5c60dd-b937-4358-9c7a-a80458e639fe'
+          tenantId: asurgentTenantId
+        }
       ]
     }
   
-    resource loggingStorageAccountSecret 'secrets@2021-11-01-preview' = {
-      name: 'LoggingStorageAccount'
+    resource logStorageAccountSecret 'secrets@2021-11-01-preview' = {
+      name: 'LogStorageAccount'
       properties: {
         value: 'DefaultEndpointsProtocol=https;AccountName=${logStorageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(logStorageAccount.id, logStorageAccount.apiVersion).keys[0].value}'
       }
