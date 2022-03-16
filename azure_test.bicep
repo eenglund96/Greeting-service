@@ -77,7 +77,7 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
         }
         {
           name: 'LogStorageAccount'
-          value: 'DefaultEndpointsProtocol=https;AccountName=${logStorageAccount.name};EndpointSuffix=${environment().suffixes.storage};AccountKey=${listKeys(logStorageAccount.id, logStorageAccount.apiVersion).keys[0].value}'
+          value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/LogStorageAccount/)'
         }
         {
           name: 'eenglund'
@@ -101,15 +101,19 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
         }
         {
           name: 'GreetingDbConnectionString'
-          value: 'Server=tcp:${reference(sqlServer.id).fullyQualifiedDomainName},1433;Initial Catalog=${sqlDbName};Persist Security Info=False;User Id=${sqlAdminUser};Password=\'${sqlAdminPassword}\';MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;'
+          value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/GreetingDbConnectionString/)'
         }
         {
           name: 'ServiceBusConnectionString'
-          value: listKeys('${serviceBusNamespace.id}/AuthorizationRules/RootManageSharedAccessKey', serviceBusNamespace.apiVersion).primaryConnectionString
+          value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/ServiceBusConnectionString/)'
         }
         {
           name: 'GreetingServiceBaseUrl'
           value: 'https://emeliefunctiondev.azurewebsites.net' 
+        }
+        {
+          name: 'KeyVaultUri'
+          value: 'https://${keyVaultName}.vault.azure.net/'
         }
       ]
     }
@@ -219,6 +223,7 @@ resource sqlServer 'Microsoft.Sql/servers@2019-06-01-preview' = {
             secrets:[
               'get'
               'list'
+              'set'
             ]
           }
           objectId: '1c5c60dd-b937-4358-9c7a-a80458e639fe'
