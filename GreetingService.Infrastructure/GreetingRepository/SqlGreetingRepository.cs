@@ -12,6 +12,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
     public class SqlGreetingRepository : IGreetingRepository
     {
         private readonly GreetingDbContext _greetingDbContext;
+
         public SqlGreetingRepository(GreetingDbContext greetingDbContext)
         {
             _greetingDbContext = greetingDbContext;
