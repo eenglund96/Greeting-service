@@ -30,7 +30,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task CreateAsync(Greeting greeting)
         {
-            await _container.CreateItemAsync(greeting);
+            await _container.UpsertItemAsync(greeting);
             throw new NotImplementedException();
         }
 
