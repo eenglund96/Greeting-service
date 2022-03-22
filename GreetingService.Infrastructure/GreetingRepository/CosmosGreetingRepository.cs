@@ -110,7 +110,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task UpdateAsync(Greeting greeting)
         {
-            await _container.UpsertItemAsync(greeting, new PartitionKey(greeting.ToString()));
+            await _container.UpsertItemAsync(greeting, new PartitionKey(greeting.id.ToString()));
         }
     }
 }
