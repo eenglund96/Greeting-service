@@ -50,12 +50,15 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task<Greeting> GetAsync(Guid id)
         {
-            var cosmosItem = await _container.GetItemLinqQueryable<Greeting>().FirstOrDefaultAsync(x => x.id == id);
-            if (cosmosItem == null)
-                throw new Exception("Not found!");
-
-            return cosmosItem;
-
+            try
+            {
+                var response = await _container.ReadItemAsync<Greeting>(id.ToString(), new PartitionKey(id.ToString()));
+                return response.Resource;
+            }
+            catch (CosmosException)
+            {
+                return null;
+            }
         }
 
         public async Task<IEnumerable<Greeting>> GetAsync()
@@ -107,7 +110,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task UpdateAsync(Greeting greeting)
         {
-            await _container.UpsertItemAsync(greeting);
+            await _container.UpsertItemAsync(greeting, new PartitionKey(greeting.ToString()));
         }
     }
 }
