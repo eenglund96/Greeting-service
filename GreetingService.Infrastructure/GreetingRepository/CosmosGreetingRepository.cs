@@ -102,6 +102,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
             }
 
             return greetingList;
+
         }
 
         public async Task UpdateAsync(Greeting greeting)
