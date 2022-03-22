@@ -70,7 +70,7 @@ namespace GreetingService.API.Controllers
             }
             catch (Exception)
             {
-                return NotFound($"Greeting with id {greeting.Id} not found!");
+                return NotFound($"Greeting with id {greeting.id} not found!");
             }
         }
 

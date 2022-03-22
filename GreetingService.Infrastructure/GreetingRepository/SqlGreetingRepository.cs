@@ -38,7 +38,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task DeleteAsync(Guid id)
         {
-            var deletegreeting = await _greetingDbContext.Greetings.FirstOrDefaultAsync(x => x.Id == id);
+            var deletegreeting = await _greetingDbContext.Greetings.FirstOrDefaultAsync(x => x.id == id);
 
             _greetingDbContext.Greetings.Remove(deletegreeting);
 
@@ -47,7 +47,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task<Greeting> GetAsync(Guid id)
         {
-           var greeting = await _greetingDbContext.Greetings.FirstOrDefaultAsync(x => x.Id == id);
+           var greeting = await _greetingDbContext.Greetings.FirstOrDefaultAsync(x => x.id == id);
             if (greeting == null)
                 throw new Exception("Not found!");
 
@@ -84,7 +84,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task UpdateAsync(Greeting greeting)
         {
-            var existingGreeting = await _greetingDbContext.Greetings.FirstOrDefaultAsync(x => x.Id == greeting.Id);
+            var existingGreeting = await _greetingDbContext.Greetings.FirstOrDefaultAsync(x => x.id == greeting.id);
             if (existingGreeting == null)
                 throw new Exception("Not found!");
 

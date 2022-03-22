@@ -25,9 +25,9 @@ namespace GreetingService.Infrastructure.GreetingRepository
             var content = File.ReadAllText(_filePath);
             var greetings = JsonSerializer.Deserialize<IList<Greeting>>(content);
 
-            if (greetings.Any(x => x.Id == greeting.Id))
+            if (greetings.Any(x => x.id == greeting.id))
             {
-                throw new Exception($"Greeting with ID: {greeting.Id} already exists.");
+                throw new Exception($"Greeting with ID: {greeting.id} already exists.");
             }
                 
             greetings.Add(greeting);
@@ -39,7 +39,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
         {
             var content = File.ReadAllText(_filePath);
             var greetings = JsonSerializer.Deserialize<IList<Greeting>>(content);
-            return greetings?.FirstOrDefault(x => x.Id == id);
+            return greetings?.FirstOrDefault(x => x.id == id);
             throw new Exception($"The {id} does not exist!");
         }
 
@@ -54,9 +54,9 @@ namespace GreetingService.Infrastructure.GreetingRepository
         {
             var content = File.ReadAllText(_filePath);
             var greetings = JsonSerializer.Deserialize<IList<Greeting>>(content);
-            var existingGreeting = greetings.FirstOrDefault(x => x.Id == greeting.Id);
+            var existingGreeting = greetings.FirstOrDefault(x => x.id == greeting.id);
             if (existingGreeting == null)
-                throw new Exception($"Greeting with id: {greeting.Id} not found!");
+                throw new Exception($"Greeting with id: {greeting.id} not found!");
 
             existingGreeting.To = greeting.To;
             existingGreeting.From = greeting.From;
@@ -69,9 +69,9 @@ namespace GreetingService.Infrastructure.GreetingRepository
         {
             var content = File.ReadAllText(_filePath);
             var greetings = JsonSerializer.Deserialize<IList<Greeting>>(content);
-            var greeting = greetings?.FirstOrDefault(x => x.Id == id);
+            var greeting = greetings?.FirstOrDefault(x => x.id == id);
             if (greeting == null)
-                throw new Exception($"Greeting with id: {greeting.Id} not found!");
+                throw new Exception($"Greeting with id: {greeting.id} not found!");
 
             greetings.Remove(greeting);
             File.WriteAllText(_filePath, JsonSerializer.Serialize(greetings, _jsonSerializerOptions));

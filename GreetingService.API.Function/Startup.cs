@@ -6,12 +6,14 @@ using GreetingService.Infrastructure.GreetingRepository;
 using GreetingService.Infrastructure.UserService;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Serilog;
 using System;
+using System.Configuration;
 using System.Reflection;
 
 [assembly: FunctionsStartup(typeof(GreetingService.API.Function.Startup))]
@@ -52,7 +54,8 @@ namespace GreetingService.API.Function
             //    var config = c.GetService<IConfiguration>();
             //    return new FileGreetingRepository(config["FileRepositoryFilePath"]);
             //});
-            builder.Services.AddScoped<IGreetingRepository, SqlGreetingRepository>();
+
+            builder.Services.AddScoped<IGreetingRepository, CosmosGreetingRepository>();
             builder.Services.AddScoped<IUserService, SqlUserService>();
             builder.Services.AddScoped<IAuthHandler, BasicAuthHandler>();
             builder.Services.AddScoped<IInvoiceService, SqlInvoiceService>();
@@ -68,6 +71,13 @@ namespace GreetingService.API.Function
             {
                 var serviceBusClient = new ServiceBusClient(config["ServiceBusConnectionString"]);
                 return serviceBusClient.CreateSender("main");
+            });
+
+
+            builder.Services.AddSingleton(c =>
+            {
+                var cosmosClient = new CosmosClient(config["CosmosDbConnectionString"]);
+                return cosmosClient;
             });
         }
         public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)

@@ -30,10 +30,10 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task CreateAsync(Greeting greeting)
         {
-            var path = $"{greeting.From}/{greeting.To}/{greeting.Id}";
+            var path = $"{greeting.From}/{greeting.To}/{greeting.id}";
             var blob = _blobContainerClient.GetBlobClient(path);
             if (await blob.ExistsAsync())
-                throw new Exception($"Greeting with id: {greeting.Id} already exists!");
+                throw new Exception($"Greeting with id: {greeting.id} already exists!");
 
             var greetingBinary = new BinaryData(greeting, _jsonSerializerOptions);
             await blob.UploadAsync(greetingBinary);
@@ -107,8 +107,8 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task UpdateAsync(Greeting greeting)
         {
-            var previousGreeting = await GetAsync(greeting.Id);
-            var previousGreetingPath = $"{previousGreeting.From}/{previousGreeting.To}/{previousGreeting.Id}";
+            var previousGreeting = await GetAsync(greeting.id);
+            var previousGreetingPath = $"{previousGreeting.From}/{previousGreeting.To}/{previousGreeting.id}";
             var previousGreetingBlobClient = _blobContainerClient.GetBlobClient(previousGreetingPath);
 
             if (!await previousGreetingBlobClient.ExistsAsync())
@@ -116,7 +116,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
             await previousGreetingBlobClient.DeleteAsync();
 
-            var newGreetingPath = $"{greeting.From}/{greeting.To}/{greeting.Id}";
+            var newGreetingPath = $"{greeting.From}/{greeting.To}/{greeting.id}";
             var newGreetingBinary = new BinaryData(greeting, _jsonSerializerOptions);
             var newGreetingBlobClient = _blobContainerClient.GetBlobClient(newGreetingPath);
             await newGreetingBlobClient.UploadAsync(newGreetingBinary);

@@ -2,6 +2,7 @@
 using GreetingService.Core;
 using Microsoft.Azure.Cosmos;
 using Microsoft.Azure.Cosmos.Linq;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using System;
@@ -18,20 +19,18 @@ namespace GreetingService.Infrastructure.GreetingRepository
         private const string _cosmosDatabaseName = "greetingsdb";
         private readonly CosmosClient _cosmosClient;
         private readonly Container _container;
-        private readonly PartitionKey _partitionKey = new PartitionKey("/id");
+        private const string _cosmosContainerName = "greetings";
 
-        public CosmosGreetingRepository(IConfiguration configuration, ILogger <CosmosGreetingRepository>logger, CosmosClient cosmosClient)
+        public CosmosGreetingRepository(ILogger <CosmosGreetingRepository>logger, CosmosClient cosmosClient)
         {
-            var connectionString = configuration["CosmosDbConnectionString"];
-            _cosmosClient = new CosmosClient(connectionString, _cosmosDatabaseName);
-            _cosmosClient.CreateDatabaseIfNotExistsAsync(_cosmosDatabaseName);
+            _cosmosClient = cosmosClient;
+            _container = _cosmosClient.GetContainer(_cosmosDatabaseName, _cosmosContainerName);
             _logger = logger;
         }
 
         public async Task CreateAsync(Greeting greeting)
         {
-            await _container.UpsertItemAsync(greeting);
-            throw new NotImplementedException();
+            await _container.UpsertItemAsync(greeting, new PartitionKey(greeting.id.ToString()));
         }
 
         public async Task DeleteAllAsync()
@@ -41,22 +40,22 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public Task DeleteAllAsync(string from, string to)
         {
-            
             throw new NotImplementedException();
         }
 
-        public async Task DeleteAsync(Guid id)
+        public async Task DeleteAsync(Guid Id)
         {
-            var cosmosItem = _container.GetItemLinqQueryable<Greeting>().Where(x => x.Id == id);
-            //await _container.DeleteItemAsync<Greeting>(_partitionKey);
- 
-
-             throw new NotImplementedException();
+            await _container.DeleteItemAsync<Greeting>(Id.ToString(), new PartitionKey(Id.ToString()));
         }
 
         public async Task<Greeting> GetAsync(Guid id)
         {
-            throw new NotImplementedException();
+            var cosmosItem = await _container.GetItemLinqQueryable<Greeting>().FirstOrDefaultAsync(x => x.id == id);
+            if (cosmosItem == null)
+                throw new Exception("Not found!");
+
+            return cosmosItem;
+
         }
 
         public async Task<IEnumerable<Greeting>> GetAsync()
@@ -74,9 +73,35 @@ namespace GreetingService.Infrastructure.GreetingRepository
             return greetingList;
         }
 
-        public Task<IEnumerable<Greeting>> GetAsync(string from, string to)
+        public async Task<IEnumerable<Greeting>> GetAsync(string from, string to)
         {
-            throw new NotImplementedException();
+            var q = "SELECT * FROM c WHERE 1 = 1";
+            var qFrom = $" AND c['From'] = '{from}'";
+            var qTo = $" AND c.To = '{to}'";
+
+            List<Greeting> greetingList = new();
+
+            if (!string.IsNullOrEmpty(from))
+            {
+                q += qFrom;
+            }
+
+            if (!string.IsNullOrEmpty(to))
+            {
+                q += qTo;
+            }
+
+            QueryDefinition query = new QueryDefinition(q);
+
+            var iterator = _container.GetItemQueryIterator<Greeting>(query);
+
+            while (iterator.HasMoreResults)
+            {
+                var results = await iterator.ReadNextAsync();
+                greetingList.AddRange(results.ToList());
+            }
+
+            return greetingList;
         }
 
         public async Task UpdateAsync(Greeting greeting)

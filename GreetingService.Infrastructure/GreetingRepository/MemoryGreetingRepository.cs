@@ -20,9 +20,9 @@ namespace GreetingService.Infrastructure.GreetingRepository
         public async Task DeleteAsync(Guid id)
         {
             var greetings = _repository;
-            var greeting = greetings?.FirstOrDefault(x => x.Id == id);
+            var greeting = greetings?.FirstOrDefault(x => x.id == id);
             if (greeting == null)
-                throw new Exception($"Greeting with id: {greeting.Id} not found!");
+                throw new Exception($"Greeting with id: {greeting.id} not found!");
 
             _repository.Remove(greeting);
         }
@@ -34,7 +34,7 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task <Greeting> GetAsync(Guid id)
         {
-            return _repository.FirstOrDefault(x => x.Id == id);
+            return _repository.FirstOrDefault(x => x.id == id);
         }
 
         public async Task <IEnumerable<Greeting>> GetAsync()
@@ -44,10 +44,10 @@ namespace GreetingService.Infrastructure.GreetingRepository
 
         public async Task UpdateAsync(Greeting greeting)
         {
-            var existingGreeting = _repository.FirstOrDefault(x => x.Id == greeting.Id);
+            var existingGreeting = _repository.FirstOrDefault(x => x.id == greeting.id);
 
             if (existingGreeting == null)
-                throw new Exception($"Greeting with id: {greeting.Id} not found!");
+                throw new Exception($"Greeting with id: {greeting.id} not found!");
 
             existingGreeting.To = greeting.To;
             existingGreeting.From = greeting.From;
