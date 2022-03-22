@@ -108,6 +108,10 @@ resource functionApp 'Microsoft.Web/sites@2020-06-01' = {
           value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/ServiceBusConnectionString/)'
         }
         {
+          name: 'CosmosDbConnectionString'
+          value: '@Microsoft.KeyVault(SecretUri=https://${keyVaultName}.vault.azure.net/secrets/CosmosDbConnectionString/)'
+        }
+        {
           name: 'GreetingServiceBaseUrl'
           value: 'https://emeliefunctiondev.azurewebsites.net' 
         }
